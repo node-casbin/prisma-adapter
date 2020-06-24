@@ -26,7 +26,7 @@ export class PrismaAdapter implements Adapter {
   }
 
   async savePolicy(model: Model): Promise<boolean> {
-    await this.#prisma.executeRaw`TRUNCATE casbin_rule;`;
+    await this.#prisma.executeRaw`DELETE FROM casbin_rule;`;
 
     let astMap = model.model.get('p')!;
     const processes: Array<Promise<CasbinRule>> = [];
