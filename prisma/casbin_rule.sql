@@ -1,3 +1,7 @@
+CREATE DATABASE IF NOT EXISTS `casbin`;
+
+USE casbin;
+
 CREATE TABLE IF NOT EXISTS `casbin_rule` (
   `id` int NOT NULL AUTO_INCREMENT,
   `ptype` varchar(255) DEFAULT NULL,
