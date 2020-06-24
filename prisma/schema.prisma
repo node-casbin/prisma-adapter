@@ -1,0 +1,21 @@
+datasource db {
+  provider = "mysql"
+  url      = "mysql://root@localhost:3306/casbin"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model CasbinRule {
+  id    Int     @id @default(autoincrement())
+  ptype String
+  v0    String?
+  v1    String?
+  v2    String?
+  v3    String?
+  v4    String?
+  v5    String?
+
+  @@map("casbin_rule")
+}

@@ -28,6 +28,65 @@ You may find other 3rd-party supported DBs in Prisma website or other places.
 npm install casbin-prisma-adapter --save
 ```
 
+## Getting Started
+
+Append the following content to your `schema.prisma`:
+
+```prisma
+model CasbinRule {
+  id    Int     @id @default(autoincrement())
+  ptype String
+  v0    String?
+  v1    String?
+  v2    String?
+  v3    String?
+  v4    String?
+  v5    String?
+
+  @@map("casbin_rule")
+}
+```
+
+Create table(MySQL):
+
+```sql
+CREATE TABLE IF NOT EXISTS `casbin_rule` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `ptype` varchar(255) DEFAULT NULL,
+  `v0` varchar(255) DEFAULT NULL,
+  `v1` varchar(255) DEFAULT NULL,
+  `v2` varchar(255) DEFAULT NULL,
+  `v3` varchar(255) DEFAULT NULL,
+  `v4` varchar(255) DEFAULT NULL,
+  `v5` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+);
+```
+
+Here is a simple example:
+
+```ts
+import casbin from 'casbin';
+import { PrismaAdapter } from 'casbin-prisma-adapter';
+
+async function main() {
+  const a = await PrismaAdapter.newAdapter();
+  const e = await casbin.newEnforcer('examples/rbac_model.conf', a);
+
+  // Check the permission.
+  e.enforce('alice', 'data1', 'read');
+
+  // Modify the policy.
+  // await e.addPolicy(...);
+  // await e.removePolicy(...);
+
+  // Save the policy back to DB.
+  await e.savePolicy();
+}
+
+main();
+```
+
 ## Getting Help
 
 - [Node-Casbin](https://github.com/casbin/node-casbin)
