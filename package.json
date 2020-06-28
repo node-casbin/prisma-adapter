@@ -36,7 +36,10 @@
     "casbin": "^5.0.4"
   },
   "files": [
-    "lib"
+    "lib",
+    "test",
+    "examples",
+    "prisma"
   ],
   "jest": {
     "testURL": "http://localhost",
