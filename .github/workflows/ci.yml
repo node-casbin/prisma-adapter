@@ -22,11 +22,13 @@ jobs:
           node-version: 12
       - run: mysql --host 127.0.0.1 --port 3306 -uroot -p -e "source ./prisma/casbin_rule.sql"
       - run: npm i
+      - run: npm run format:check
+      - run: npm run lint
       - run: npx jest --coverage --forceExit
       - name: Coveralls Parallel
         uses: coverallsapp/github-action@master
         with:
-          github-token: ${{ secrets.github_token }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
   finish:
     needs: build
@@ -35,5 +37,14 @@ jobs:
       - name: Coveralls Finished
         uses: coverallsapp/github-action@master
         with:
-          github-token: ${{ secrets.github_token }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           parallel-finished: true
+      - uses: actions/checkout@v2
+      - run: npm i
+      - run: npm run build
+      - name: Release
+        if: github.event_name == 'push' && github.repository == 'node-casbin/prisma-adapter'
+        run: npx semantic-release
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
