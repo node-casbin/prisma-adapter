@@ -1,4 +1,4 @@
-import { Adapter, Model } from 'casbin';
+import type { Adapter, Model } from 'casbin';
 import type {
   PrismaClientOptions,
   CasbinRule,
