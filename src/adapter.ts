@@ -150,7 +150,7 @@ export class PrismaAdapter implements Adapter {
 
   #open = async (): Promise<void> => {
     this.#prisma = new PrismaClient(this.#option);
-    this.#prisma.connect();
+    await this.#prisma.connect();
   };
 
   #loadPolicyLine = (line: CasbinRuleCreateInput, model: Model): void => {
