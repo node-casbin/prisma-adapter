@@ -24,6 +24,7 @@ jobs:
       - run: npm i
       - run: npm run format:check
       - run: npm run lint
+      - run: npm run generate
       - run: npx jest --coverage --forceExit
       - name: Coveralls Parallel
         uses: coverallsapp/github-action@master

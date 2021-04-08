@@ -1,19 +1,14 @@
 import type { Adapter, Model } from 'casbin';
-import type {
-  PrismaClientOptions,
-  CasbinRule,
-  CasbinRuleCreateInput,
-  BatchPayload,
-} from '@prisma/client';
+import type { Prisma, CasbinRule } from '@prisma/client';
 
 import { Helper } from 'casbin';
 import { PrismaClient } from '@prisma/client';
 
 export class PrismaAdapter implements Adapter {
-  #option?: PrismaClientOptions;
+  #option?: Prisma.PrismaClientOptions;
   #prisma: PrismaClient;
 
-  constructor(option?: PrismaClientOptions) {
+  constructor(option?: Prisma.PrismaClientOptions) {
     this.#option = option;
   }
 
@@ -26,7 +21,7 @@ export class PrismaAdapter implements Adapter {
   }
 
   async savePolicy(model: Model): Promise<boolean> {
-    await this.#prisma.executeRaw`DELETE FROM casbin_rule;`;
+    await this.#prisma.$executeRaw`DELETE FROM casbin_rule;`;
 
     let astMap = model.model.get('p')!;
     const processes: Array<Promise<CasbinRule>> = [];
@@ -93,7 +88,7 @@ export class PrismaAdapter implements Adapter {
     ptype: string,
     rules: string[][]
   ): Promise<void> {
-    const processes: Array<Promise<BatchPayload>> = [];
+    const processes: Array<Promise<Prisma.BatchPayload>> = [];
     for (const rule of rules) {
       const line = this.#savePolicyLine(ptype, rule);
       const p = this.#prisma.casbinRule.deleteMany({ where: line });
@@ -110,7 +105,7 @@ export class PrismaAdapter implements Adapter {
     fieldIndex: number,
     ...fieldValues: string[]
   ): Promise<void> {
-    const line: CasbinRuleCreateInput = { ptype };
+    const line: Prisma.CasbinRuleCreateInput = { ptype };
 
     const idx = fieldIndex + fieldValues.length;
     if (fieldIndex <= 0 && 0 < idx) {
@@ -136,11 +131,11 @@ export class PrismaAdapter implements Adapter {
   }
 
   async close(): Promise<any> {
-    return this.#prisma.disconnect();
+    return this.#prisma.$disconnect();
   }
 
   static async newAdapter(
-    option?: PrismaClientOptions
+    option?: Prisma.PrismaClientOptions
   ): Promise<PrismaAdapter> {
     const a = new PrismaAdapter(option);
     await a.#open();
@@ -150,10 +145,13 @@ export class PrismaAdapter implements Adapter {
 
   #open = async (): Promise<void> => {
     this.#prisma = new PrismaClient(this.#option);
-    await this.#prisma.connect();
+    await this.#prisma.$connect();
   };
 
-  #loadPolicyLine = (line: CasbinRuleCreateInput, model: Model): void => {
+  #loadPolicyLine = (
+    line: Prisma.CasbinRuleCreateInput,
+    model: Model
+  ): void => {
     const result =
       line.ptype +
       ', ' +
@@ -163,8 +161,11 @@ export class PrismaAdapter implements Adapter {
     Helper.loadPolicyLine(result, model);
   };
 
-  #savePolicyLine = (ptype: string, rule: string[]): CasbinRuleCreateInput => {
-    const line: CasbinRuleCreateInput = { ptype };
+  #savePolicyLine = (
+    ptype: string,
+    rule: string[]
+  ): Prisma.CasbinRuleCreateInput => {
+    const line: Prisma.CasbinRuleCreateInput = { ptype };
 
     if (rule.length > 0) {
       line.v0 = rule[0];
