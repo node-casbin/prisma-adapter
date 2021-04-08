@@ -1,6 +1,6 @@
 import type { Adapter, Model } from 'casbin';
 import type {
-  PrismaClientOptions,
+  Prisma,
   CasbinRule,
   CasbinRuleCreateInput,
   BatchPayload,
@@ -10,10 +10,10 @@ import { Helper } from 'casbin';
 import { PrismaClient } from '@prisma/client';
 
 export class PrismaAdapter implements Adapter {
-  #option?: PrismaClientOptions;
+  #option?: Prisma.PrismaClientOptions;
   #prisma: PrismaClient;
 
-  constructor(option?: PrismaClientOptions) {
+  constructor(option?: Prisma.PrismaClientOptions) {
     this.#option = option;
   }
 
@@ -26,7 +26,7 @@ export class PrismaAdapter implements Adapter {
   }
 
   async savePolicy(model: Model): Promise<boolean> {
-    await this.#prisma.executeRaw`DELETE FROM casbin_rule;`;
+    await this.#prisma.$executeRaw`DELETE FROM casbin_rule;`;
 
     let astMap = model.model.get('p')!;
     const processes: Array<Promise<CasbinRule>> = [];
@@ -136,11 +136,11 @@ export class PrismaAdapter implements Adapter {
   }
 
   async close(): Promise<any> {
-    return this.#prisma.disconnect();
+    return this.#prisma.$disconnect();
   }
 
   static async newAdapter(
-    option?: PrismaClientOptions
+    option?: Prisma.PrismaClientOptions
   ): Promise<PrismaAdapter> {
     const a = new PrismaAdapter(option);
     await a.#open();
@@ -150,7 +150,7 @@ export class PrismaAdapter implements Adapter {
 
   #open = async (): Promise<void> => {
     this.#prisma = new PrismaClient(this.#option);
-    await this.#prisma.connect();
+    await this.#prisma.$connect();
   };
 
   #loadPolicyLine = (line: CasbinRuleCreateInput, model: Model): void => {
