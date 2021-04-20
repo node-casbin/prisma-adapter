@@ -9,8 +9,14 @@ export class PrismaAdapter implements Adapter {
   #option?: Prisma.PrismaClientOptions;
   #prisma: PrismaClient;
 
-  constructor(option?: Prisma.PrismaClientOptions) {
+  constructor(
+    option?: Prisma.PrismaClientOptions,
+    prismaClient?: PrismaClient
+  ) {
     this.#option = option;
+    if (prismaClient) {
+      this.#prisma = prismaClient;
+    }
   }
 
   async loadPolicy(model: Model): Promise<void> {
@@ -148,7 +154,9 @@ export class PrismaAdapter implements Adapter {
     if (!this.#option) {
       this.#option = {};
     }
-    this.#prisma = new PrismaClient(this.#option);
+    if (!this.#prisma) {
+      this.#prisma = new PrismaClient(this.#option);
+    }
     await this.#prisma.$connect();
   };
 
