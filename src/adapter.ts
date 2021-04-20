@@ -9,13 +9,11 @@ export class PrismaAdapter implements Adapter {
   #option?: Prisma.PrismaClientOptions;
   #prisma: PrismaClient;
 
-  constructor(
-    option?: Prisma.PrismaClientOptions,
-    prismaClient?: PrismaClient
-  ) {
-    this.#option = option;
-    if (prismaClient) {
-      this.#prisma = prismaClient;
+  constructor(option?: Prisma.PrismaClientOptions | PrismaClient) {
+    if (option instanceof PrismaClient) {
+      this.#prisma = option;
+    } else {
+      this.#option = option;
     }
   }
 
