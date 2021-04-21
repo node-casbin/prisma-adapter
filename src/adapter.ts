@@ -9,6 +9,10 @@ export class PrismaAdapter implements Adapter {
   #option?: Prisma.PrismaClientOptions;
   #prisma: PrismaClient;
 
+  /**
+   * @param option It should be PrismaClientOptions or PrismaClient.
+   * You should later call open() to activate it.
+   */
   constructor(option?: Prisma.PrismaClientOptions | PrismaClient) {
     if (option instanceof PrismaClient) {
       this.#prisma = option;
