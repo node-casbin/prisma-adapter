@@ -144,7 +144,7 @@ export class PrismaAdapter implements Adapter {
   }
 
   static async newAdapter(
-    option?: Prisma.PrismaClientOptions
+     option?: Prisma.PrismaClientOptions | PrismaClient
   ): Promise<PrismaAdapter> {
     const a = new PrismaAdapter(option);
     await a.#open();
