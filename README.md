@@ -19,7 +19,7 @@ Based on [Officially Supported Databases](https://www.prisma.io/docs/), the curr
 - PostgreSQL
 - MySQL
 - SQLite
-- MongoDB (Preview)
+- MongoDB
 
 You may find other 3rd-party supported DBs in Prisma website or other places.
 

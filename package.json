@@ -12,28 +12,28 @@
     "test": "jest --forceExit"
   },
   "devDependencies": {
-    "@prisma/client": "^3.4.0",
-    "@semantic-release/git": "^9.0.0",
-    "@types/jest": "^26.0.0",
-    "@types/node": "^14.0.13",
+    "@prisma/client": "^4.2.1",
+    "@semantic-release/git": "^10.0.1",
+    "@types/jest": "^28.1.6",
+    "@types/node": "^18.7.4",
     "@typescript-eslint/eslint-plugin": "^3.4.0",
     "@typescript-eslint/parser": "^3.4.0",
-    "casbin": "^5.0.4",
+    "casbin": "^5.16.0",
     "eslint": "^7.3.1",
     "eslint-config-prettier": "^6.11.0",
-    "jest": "^26.1.0",
-    "prettier": "^2.0.5",
-    "prisma": "^3.4.0",
+    "jest": "^28.1.3",
+    "prettier": "^2.7.1",
+    "prisma": "^4.2.1",
     "rimraf": "^3.0.2",
-    "semantic-release": "^17.1.1",
-    "ts-jest": "^26.1.1",
-    "ts-node": "^8.10.2",
-    "typescript": "^4.2.4"
+    "semantic-release": "^19.0.3",
+    "ts-jest": "^28.0.8",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.7.4"
   },
   "peerDependencies": {
-    "@prisma/client": "^3.4.0",
-    "casbin": "^5.0.4",
-    "prisma": "^3.4.0"
+    "@prisma/client": "^4.2.1",
+    "casbin": "^5.16.0",
+    "prisma": "^4.2.1"
   },
   "files": [
     "lib",
