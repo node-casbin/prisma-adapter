@@ -30,7 +30,7 @@ export class PrismaAdapter implements Adapter {
   }
 
   async savePolicy(model: Model): Promise<boolean> {
-    await this.#prisma.$executeRaw`DELETE FROM casbin_rule;`;
+    await this.#prisma.casbinRule.deleteMany();
 
     let astMap = model.model.get('p')!;
     const processes: Array<Promise<CasbinRule>> = [];
