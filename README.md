@@ -3,7 +3,7 @@
 [![NPM version][npm-image]][npm-url]
 [![NPM download][download-image]][download-url]
 [![Build Status][ci-image]][ci-url]
-[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/casbin/lobby)
+[![Discord](https://img.shields.io/discord/1022748306096537660?logo=discord&label=discord&color=5865F2)](https://discord.gg/S5UjpzGZjN)
 
 [npm-image]: https://img.shields.io/npm/v/casbin-prisma-adapter.svg
 [npm-url]: https://npmjs.org/package/casbin-prisma-adapter
