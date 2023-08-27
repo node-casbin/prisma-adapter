@@ -9,6 +9,16 @@ export class PrismaAdapter implements Adapter {
   #option?: Prisma.PrismaClientOptions;
   #prisma: PrismaClient;
 
+  filtered = false;
+
+  public isFiltered(): boolean {
+    return this.filtered;
+  }
+
+  public enableFiltered(enabled: boolean): void {
+    this.filtered = enabled;
+  }
+
   /**
    * @param option It should be PrismaClientOptions or PrismaClient.
    * You should later call open() to activate it.
@@ -59,6 +69,7 @@ export class PrismaAdapter implements Adapter {
       },
     });
     lines.forEach((line) => this.#loadPolicyLine(line, model));
+    this.enableFiltered(true);
   }
 
   async savePolicy(model: Model): Promise<boolean> {
