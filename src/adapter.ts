@@ -75,29 +75,23 @@ export class PrismaAdapter implements Adapter {
   async savePolicy(model: Model): Promise<boolean> {
     await this.#prisma.$executeRaw`DELETE FROM casbin_rule;`;
 
-    let astMap = model.model.get('p')!;
     const processes: Array<Promise<CasbinRule>> = [];
 
-    for (const [ptype, ast] of astMap) {
-      for (const rule of ast.policy) {
-        const line = this.#savePolicyLine(ptype, rule);
-        const p = this.#prisma.casbinRule.create({
-          data: line,
-        });
-        processes.push(p);
+    const savePolicyType = (ptype: string): void => {
+      const astMap = model.model.get(ptype);
+      if (astMap) {
+        for (const [ptype, ast] of astMap) {
+          for (const rule of ast.policy) {
+            const line = this.#savePolicyLine(ptype, rule);
+            const p = this.#prisma.casbinRule.create({ data: line });
+            processes.push(p);
+          }
+        }
       }
-    }
+    };
 
-    astMap = model.model.get('g')!;
-    for (const [ptype, ast] of astMap) {
-      for (const rule of ast.policy) {
-        const line = this.#savePolicyLine(ptype, rule);
-        const p = this.#prisma.casbinRule.create({
-          data: line,
-        });
-        processes.push(p);
-      }
-    }
+    savePolicyType('p');
+    savePolicyType('g');
 
     // https://github.com/prisma/prisma-client-js/issues/332
     await Promise.all(processes);
