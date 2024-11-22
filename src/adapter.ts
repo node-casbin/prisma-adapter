@@ -75,7 +75,7 @@ export class PrismaAdapter implements Adapter {
   async savePolicy(model: Model): Promise<boolean> {
     await this.#prisma.$executeRaw`DELETE FROM casbin_rule;`;
 
-    const processes: Array<Promise<CasbinRule>> = [];
+    const lines: Prisma.CasbinRuleCreateInput[] = [];
 
     const savePolicyType = (ptype: string): void => {
       const astMap = model.model.get(ptype);
@@ -83,8 +83,7 @@ export class PrismaAdapter implements Adapter {
         for (const [ptype, ast] of astMap) {
           for (const rule of ast.policy) {
             const line = this.#savePolicyLine(ptype, rule);
-            const p = this.#prisma.casbinRule.create({ data: line });
-            processes.push(p);
+            lines.push(line);
           }
         }
       }
@@ -94,7 +93,7 @@ export class PrismaAdapter implements Adapter {
     savePolicyType('g');
 
     // https://github.com/prisma/prisma-client-js/issues/332
-    await Promise.all(processes);
+    await this.#prisma.casbinRule.createMany({ data: lines });
 
     return true;
   }
