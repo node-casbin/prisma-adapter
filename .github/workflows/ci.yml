@@ -19,7 +19,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 20
       - run: mysql --host 127.0.0.1 --port 3306 -uroot -p -e "source ./prisma/casbin_rule.sql"
       - run: npm i
       - run: npx prisma generate
