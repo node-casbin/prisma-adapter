@@ -24,10 +24,11 @@ export class PrismaAdapter implements Adapter {
    * You should later call open() to activate it.
    */
   constructor(option?: Prisma.PrismaClientOptions | PrismaClient) {
-    if (option instanceof PrismaClient) {
-      this.#prisma = option;
-    } else {
-      this.#option = option;
+    if (option && typeof (option as PrismaClient).$connect === 'function') {
+      // If option is PrismaClient, we use it directly.
+      this.#prisma = option as PrismaClient;
+    } else if (option) {
+      this.#option = option as Prisma.PrismaClientOptions;
     }
   }
 
