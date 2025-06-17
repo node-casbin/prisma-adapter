@@ -72,6 +72,10 @@ import { PrismaAdapter } from 'casbin-prisma-adapter';
 
 async function main() {
   const a = await PrismaAdapter.newAdapter();
+  // Or:
+  // const prisma = new PrismaClient();
+  // const a = await PrismaAdapter.newAdapter(prisma);
+
   const e = await casbin.newEnforcer('examples/rbac_model.conf', a);
 
   // Check the permission.
