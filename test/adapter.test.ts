@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import { PrismaClient } from '@prisma/client';
 import { newEnforcer, Enforcer, Util } from 'casbin';
 import { PrismaAdapter } from '../src/adapter';
 
@@ -35,7 +36,8 @@ async function testGetGroupingPolicy(
 test(
   'TestAdapter',
   async () => {
-    const a = await PrismaAdapter.newAdapter();
+    const prisma = new PrismaClient();
+    const a = await PrismaAdapter.newAdapter(prisma);
 
     try {
       // Because the DB is empty at first,
