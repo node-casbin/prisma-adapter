@@ -197,11 +197,14 @@ export class PrismaAdapter implements Adapter {
         const { PrismaClient } = await import('@prisma/client');
         this.#prisma = new PrismaClient(this.#option);
       } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
         throw new Error(
           'Failed to import PrismaClient from @prisma/client. ' +
             'If you are using a custom Prisma client output path, ' +
             'please pass a PrismaClient instance to the adapter constructor. ' +
-            'Example: new PrismaAdapter(prismaClientInstance)'
+            'Example: new PrismaAdapter(prismaClientInstance). ' +
+            `Original error: ${errorMessage}`
         );
       }
     }

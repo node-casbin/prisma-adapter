@@ -125,7 +125,7 @@ async function main() {
 main();
 ```
 
-**Important**: When using custom output paths, you must always pass a PrismaClient instance to the adapter. The adapter will only attempt to import from `@prisma/client` when no instance is provided.
+**Important**: When using custom output paths, you must always pass a PrismaClient instance to the adapter. The adapter will attempt to dynamically import from `@prisma/client` only when no instance is provided and the adapter is initialized.
 
 ## Getting Help
 
