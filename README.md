@@ -92,6 +92,41 @@ async function main() {
 main();
 ```
 
+## Using Custom Prisma Client Output Path (Prisma v7+)
+
+If you're using a custom output path for your Prisma client (e.g., generating the client to `./src/generated/client`), you must pass your PrismaClient instance to the adapter:
+
+```prisma
+// schema.prisma
+generator client {
+  provider = "prisma-client-js"
+  output   = "./src/generated/client"
+}
+```
+
+```ts
+import casbin from 'casbin';
+import { PrismaAdapter } from 'casbin-prisma-adapter';
+import { PrismaClient } from './src/generated/client'; // Your custom path
+
+async function main() {
+  const prisma = new PrismaClient();
+  const a = await PrismaAdapter.newAdapter(prisma);
+
+  const e = await casbin.newEnforcer('examples/rbac_model.conf', a);
+
+  // Check the permission.
+  e.enforce('alice', 'data1', 'read');
+
+  // Save the policy back to DB.
+  await e.savePolicy();
+}
+
+main();
+```
+
+**Important**: When using custom output paths, you must always pass a PrismaClient instance to the adapter. The adapter will attempt to dynamically import from `@prisma/client` only when no instance is provided and the adapter is initialized.
+
 ## Getting Help
 
 - [Node-Casbin](https://github.com/casbin/node-casbin)

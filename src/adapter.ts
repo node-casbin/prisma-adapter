@@ -1,9 +1,7 @@
 import type { Adapter, Model } from 'casbin';
-import type { CasbinRule } from '@prisma/client';
+import type { CasbinRule, PrismaClient, Prisma } from '@prisma/client';
 
 import { Helper } from 'casbin';
-import { PrismaClient } from '@prisma/client';
-import { Prisma } from '@prisma/client';
 
 export class PrismaAdapter implements Adapter {
   #option?: Prisma.PrismaClientOptions;
@@ -194,7 +192,21 @@ export class PrismaAdapter implements Adapter {
       this.#option = {};
     }
     if (!this.#prisma) {
-      this.#prisma = new PrismaClient(this.#option);
+      try {
+        // Dynamically import PrismaClient only when needed to instantiate
+        const { PrismaClient } = await import('@prisma/client');
+        this.#prisma = new PrismaClient(this.#option);
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
+        throw new Error(
+          'Failed to import PrismaClient from @prisma/client. ' +
+            'If you are using a custom Prisma client output path, ' +
+            'please pass a PrismaClient instance to the adapter constructor. ' +
+            'Example: new PrismaAdapter(prismaClientInstance). ' +
+            `Original error: ${errorMessage}`
+        );
+      }
     }
     await this.#prisma.$connect();
   };
