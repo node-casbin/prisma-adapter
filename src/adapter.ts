@@ -192,9 +192,18 @@ export class PrismaAdapter implements Adapter {
       this.#option = {};
     }
     if (!this.#prisma) {
-      // Dynamically import PrismaClient only when needed to instantiate
-      const { PrismaClient } = await import('@prisma/client');
-      this.#prisma = new PrismaClient(this.#option);
+      try {
+        // Dynamically import PrismaClient only when needed to instantiate
+        const { PrismaClient } = await import('@prisma/client');
+        this.#prisma = new PrismaClient(this.#option);
+      } catch (error) {
+        throw new Error(
+          'Failed to import PrismaClient from @prisma/client. ' +
+            'If you are using a custom Prisma client output path, ' +
+            'please pass a PrismaClient instance to the adapter constructor. ' +
+            'Example: new PrismaAdapter(prismaClientInstance)'
+        );
+      }
     }
     await this.#prisma.$connect();
   };
