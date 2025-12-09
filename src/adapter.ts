@@ -1,9 +1,7 @@
 import type { Adapter, Model } from 'casbin';
-import type { CasbinRule } from '@prisma/client';
+import type { CasbinRule, PrismaClient, Prisma } from '@prisma/client';
 
 import { Helper } from 'casbin';
-import { PrismaClient } from '@prisma/client';
-import { Prisma } from '@prisma/client';
 
 export class PrismaAdapter implements Adapter {
   #option?: Prisma.PrismaClientOptions;
@@ -194,6 +192,8 @@ export class PrismaAdapter implements Adapter {
       this.#option = {};
     }
     if (!this.#prisma) {
+      // Dynamically import PrismaClient only when needed to instantiate
+      const { PrismaClient } = await import('@prisma/client');
       this.#prisma = new PrismaClient(this.#option);
     }
     await this.#prisma.$connect();
