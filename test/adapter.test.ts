@@ -12,6 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'dotenv/config';
+import { Pool } from 'pg';
+import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '@prisma/client';
 import { newEnforcer, Enforcer, Util } from 'casbin';
 import { PrismaAdapter } from '../src/adapter';
@@ -36,7 +39,11 @@ async function testGetGroupingPolicy(
 test(
   'TestAdapter',
   async () => {
-    const prisma = new PrismaClient();
+    const pool = new Pool({
+      connectionString: 'postgresql://postgres:postgres@localhost:5432/casbin',
+    });
+    const adapter = new PrismaPg(pool);
+    const prisma = new PrismaClient({ adapter });
     const a = await PrismaAdapter.newAdapter(prisma);
 
     try {
