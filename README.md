@@ -33,19 +33,31 @@ npm install casbin-prisma-adapter --save
 
 ### Prisma v7 Setup
 
-This adapter supports Prisma v7. With Prisma v7, the database connection URL is no longer specified in the schema file. Instead, you need to provide it at runtime using one of these methods:
+This adapter supports Prisma v7. With Prisma v7, the database connection URL is no longer specified in the schema file. Instead, you need to configure it using a `prisma.config.ts` file:
 
-1. **Environment Variable** (Recommended): Set `DATABASE_URL` in your environment or `.env` file:
+Create a `prisma.config.ts` file in your project root:
 
-   ```
-   DATABASE_URL="mysql://root@localhost:3306/casbin"
-   ```
+```ts
+import { defineConfig } from 'prisma/config';
 
-2. **Pass PrismaClient instance**: Create a PrismaClient with your configuration and pass it to the adapter:
-   ```ts
-   const prisma = new PrismaClient();
-   const adapter = await PrismaAdapter.newAdapter(prisma);
-   ```
+export default defineConfig({
+  datasourceUrl:
+    process.env.DATABASE_URL || 'mysql://root@localhost:3306/casbin',
+});
+```
+
+Then set the `DATABASE_URL` environment variable in your `.env` file:
+
+```
+DATABASE_URL="mysql://root@localhost:3306/casbin"
+```
+
+Alternatively, you can pass a configured PrismaClient instance to the adapter:
+
+```ts
+const prisma = new PrismaClient();
+const adapter = await PrismaAdapter.newAdapter(prisma);
+```
 
 ### Schema Configuration
 
