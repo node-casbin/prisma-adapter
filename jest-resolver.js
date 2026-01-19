@@ -5,6 +5,17 @@ const { statSync } = require('fs');
  * Custom Jest resolver to handle Node.js subpath imports
  * Required for Prisma v7 which uses "#main-entry-point" style imports
  */
+
+/**
+ * Extracts the base path for a Prisma client package
+ * @param {string} pkgPath - The base directory path
+ * @param {string} packageName - The package name to extract ('.prisma/client' or '@prisma/client')
+ * @returns {string} The extracted package path
+ */
+function extractPrismaClientPath(pkgPath, packageName) {
+  return pkgPath.substring(0, pkgPath.indexOf(packageName) + packageName.length);
+}
+
 module.exports = (path, options) => {
   // Handle subpath imports for @prisma/client
   if (path.startsWith('#')) {
@@ -14,8 +25,8 @@ module.exports = (path, options) => {
       // For .prisma/client package with subpath imports
       if (pkgPath.includes('node_modules/.prisma/client') || pkgPath.includes('node_modules/@prisma/client')) {
         const prismaClientPath = pkgPath.includes('.prisma/client') 
-          ? pkgPath.substring(0, pkgPath.indexOf('.prisma/client') + '.prisma/client'.length)
-          : pkgPath.substring(0, pkgPath.indexOf('@prisma/client') + '@prisma/client'.length);
+          ? extractPrismaClientPath(pkgPath, '.prisma/client')
+          : extractPrismaClientPath(pkgPath, '@prisma/client');
         
         // Check for .prisma/client first
         const generatedClientPath = prismaClientPath.replace('@prisma/client', '.prisma/client');
@@ -30,9 +41,9 @@ module.exports = (path, options) => {
             
             if (typeof importPath === 'string') {
               targetPath = importPath;
-            } else if (importPath.require && typeof importPath.require === 'string') {
+            } else if (typeof importPath.require === 'string') {
               targetPath = importPath.require;
-            } else if (importPath.require && importPath.require.node) {
+            } else if (typeof importPath.require === 'object' && importPath.require.node) {
               targetPath = importPath.require.node;
             } else if (importPath.default) {
               targetPath = importPath.default;
@@ -43,7 +54,7 @@ module.exports = (path, options) => {
               return resolvedPath;
             }
           }
-        } catch (e) {
+        } catch (error) {
           // .prisma/client not found or doesn't have the import, continue
         }
       }
