@@ -5,6 +5,9 @@ on: [push, pull_request]
 jobs:
   build:
     runs-on: ubuntu-latest
+    
+    env:
+      DATABASE_URL: mysql://root@127.0.0.1:3306/casbin
 
     services:
       mysql:
