@@ -7,22 +7,31 @@ jobs:
     runs-on: ubuntu-latest
 
     services:
-      mysql:
-        image: mysql:latest
+      postgres:
+        image: postgres:latest
         ports:
-          - 3306:3306
+          - 5432:5432
         env:
-          MYSQL_ALLOW_EMPTY_PASSWORD: yes
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: casbin
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/casbin
 
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v3
         with:
-          node-version: 20
-      - run: mysql --host 127.0.0.1 --port 3306 -uroot -p -e "source ./prisma/casbin_rule.sql"
+          node-version: 22.21.1
       - run: npm i
       - run: npx prisma generate
+      - run: npx prisma db push
       - run: npm run format:check
       - run: npm run lint
       - run: npx jest --coverage --forceExit
