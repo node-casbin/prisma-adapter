@@ -31,9 +31,17 @@ npm install casbin-prisma-adapter --save
 
 ## Getting Started
 
-Append the following content to your `schema.prisma`:
+Add a datasource and the CasbinRule model to your `schema.prisma`:
 
 ```prisma
+datasource db {
+  provider = "mysql" // or "postgresql", "sqlite", "mongodb"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
 model CasbinRule {
   id    Int     @id @default(autoincrement())
   ptype String
@@ -46,6 +54,19 @@ model CasbinRule {
 
   @@map("casbin_rule")
 }
+```
+
+For Prisma 7+, create a `prisma.config.ts` file in your project root to configure the database connection:
+
+```ts
+import { defineConfig } from "prisma/config";
+
+export default defineConfig({
+  schema: "prisma/schema.prisma",
+  datasource: {
+    url: process.env["DATABASE_URL"],
+  },
+});
 ```
 
 Create table(MySQL):

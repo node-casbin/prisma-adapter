@@ -1,6 +1,5 @@
 datasource db {
   provider = "mysql"
-  url      = "mysql://root@localhost:3306/casbin"
 }
 
 generator client {
