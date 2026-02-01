@@ -1,16 +1,15 @@
 # Prisma Adapter
 
+[![CI](https://github.com/node-casbin/prisma-adapter/actions/workflows/ci.yml/badge.svg)](https://github.com/node-casbin/prisma-adapter/actions/workflows/ci.yml)
+[![Coverage Status](https://coveralls.io/repos/github/node-casbin/prisma-adapter/badge.svg?branch=master)](https://coveralls.io/github/node-casbin/prisma-adapter?branch=master)
 [![NPM version][npm-image]][npm-url]
 [![NPM download][download-image]][download-url]
-[![Build Status][ci-image]][ci-url]
 [![Discord](https://img.shields.io/discord/1022748306096537660?logo=discord&label=discord&color=5865F2)](https://discord.gg/S5UjpzGZjN)
 
-[npm-image]: https://img.shields.io/npm/v/casbin-prisma-adapter.svg
-[npm-url]: https://npmjs.org/package/casbin-prisma-adapter
-[download-image]: https://img.shields.io/npm/dm/casbin-prisma-adapter.svg
-[download-url]: https://npmjs.org/package/casbin-prisma-adapter
-[ci-image]: https://github.com/node-casbin/prisma-adapter/workflows/ci/badge.svg?branch=master
-[ci-url]: https://github.com/node-casbin/prisma-adapter/actions
+[npm-image]: https://img.shields.io/npm/v/casbin-prisma-adapter.svg?style=flat-square
+[npm-url]: https://npmjs.com/package/casbin-prisma-adapter
+[download-image]: https://img.shields.io/npm/dm/casbin-prisma-adapter.svg?style=flat-square
+[download-url]: https://npmjs.com/package/casbin-prisma-adapter
 
 Prisma Adapter is the [Prisma](https://github.com/prisma/prisma) adapter for [Node-Casbin](https://github.com/casbin/node-casbin). With this library, Node-Casbin can load policy from Prisma supported database or save policy to it.
 

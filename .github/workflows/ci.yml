@@ -1,14 +1,32 @@
-name: ci
+name: CI
 
-on:
-  push:
-    branches:
-      - master
-  pull_request:
+on: [push, pull_request]
 
 jobs:
-  build:
+  lint:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+
+      - name: Install Dependency
+        run: npm install
+
+      - name: Run Lint
+        run: npm run lint
+
+      - name: Run Format Check
+        run: npm run format:check
+
+  coverage:
+    needs: [lint]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
 
     services:
       postgres:
@@ -30,35 +48,97 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 22.21.1
-      - run: npm i
-      - run: npx prisma generate
-      - run: npx prisma db push
-      - run: npm run format:check
-      - run: npm run lint
-      - run: npx jest --coverage --forceExit
-      - name: Coveralls Parallel
-        uses: coverallsapp/github-action@master
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
 
-  finish:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Coveralls Finished
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ^20
+
+      - name: Install Dependency
+        run: npm install
+
+      - name: Generate Prisma Client
+        run: npx prisma generate
+
+      - name: Push Database Schema
+        run: npx prisma db push
+
+      - name: Run Coverage
+        run: npx jest --coverage --forceExit
+
+      - name: Coveralls
         uses: coverallsapp/github-action@master
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          parallel-finished: true
-      - uses: actions/checkout@v2
-      - run: npm i
-      - run: npm run build
-      - name: Release
-        if: github.event_name == 'push' && github.repository == 'node-casbin/prisma-adapter'
-        run: npx semantic-release
+          parallel: true
+
+  test:
+    needs: [lint]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    strategy:
+      matrix:
+        node: [^20]
+
+    services:
+      postgres:
+        image: postgres:latest
+        ports:
+          - 5432:5432
         env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: casbin
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/casbin
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: Install Dependency
+        run: npm install
+
+      - name: Generate Prisma Client
+        run: npx prisma generate
+
+      - name: Push Database Schema
+        run: npx prisma db push
+
+      - name: Run Unit test
+        run: npm run test
+
+  semantic-release:
+    needs: [lint, test, coverage]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ^20
+
+      - name: Run semantic-release
+        if: github.repository == 'node-casbin/prisma-adapter' && github.event_name == 'push'
+        run: |
+          npm install
+          npm run build
+          npx semantic-release
+        env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
