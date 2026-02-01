@@ -1,5 +1,5 @@
-Prisma Adapter
-====
+# Prisma Adapter
+
 [![CI](https://github.com/node-casbin/prisma-adapter/actions/workflows/ci.yml/badge.svg)](https://github.com/node-casbin/prisma-adapter/actions/workflows/ci.yml)
 [![Coverage Status](https://coveralls.io/repos/github/node-casbin/prisma-adapter/badge.svg?branch=master)](https://coveralls.io/github/node-casbin/prisma-adapter?branch=master)
 [![NPM version][npm-image]][npm-url]
