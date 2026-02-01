@@ -79,7 +79,7 @@ jobs:
       contents: read
     strategy:
       matrix:
-        node: [^18, ^20]
+        node: [^20]
 
     services:
       postgres:
